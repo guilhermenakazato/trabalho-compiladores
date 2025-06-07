@@ -1,22 +1,19 @@
 #include "scanner.h"    
 
+// lexema número: 3, 4, 5
+// lexema palavra: 0, 1, 2
+
 //Construtor que recebe uma string com o nome do arquivo 
 //de entrada e preenche input com seu conteúdo.
-Scanner::Scanner(string input)
-{
-    /*this->input = input;
-    cout << "Entrada: " << input << endl << "Tamanho: " 
-         << input.length() << endl;*/
+Scanner::Scanner(string input) {
     pos = 0;
     line = 1;
 
     ifstream inputFile(input, ios::in);
     string line;
 
-    if (inputFile.is_open())
-    {
-        while (getline(inputFile,line) )
-        {
+    if (inputFile.is_open()) {
+        while (getline(inputFile,line)) {
             this->input.append(line + '\n');
         }
         inputFile.close();
@@ -27,33 +24,264 @@ Scanner::Scanner(string input)
     //A próxima linha deve ser comentada posteriormente.
     //Ela é utilizada apenas para verificar se o 
     //preenchimento de input foi feito corretamente.
-    cout << this->input;
-
+    // cout << this->input;
 }
 
-int
-Scanner::getLine()
-{
+int Scanner::getLine() {
     return line;
 }
 
 //Método que retorna o próximo token da entrada
-Token* 
-Scanner::nextToken()
-{
-    Token* tok;
+Token* Scanner::nextToken(bool reservedPriority) {
+    int state = 0;
     string lexeme;
 
-    //TODO
+    while(true) {
+        switch(state) {
+            case 0: // 0, 3, 6, 22, 36, 41
+                if(input[pos] == '\0')
+                    return new Token(END_OF_FILE);
 
-    return tok;
- 
+                if(isalpha(input[pos])) {
+                    lexeme += input[pos];
+                    state = 1;
+                } else if(isdigit(input[pos])) {
+                    lexeme += input[pos];
+                    state = 4;
+                } else if(input[pos] == '&') {
+                    state = 7;
+                } else if(input[pos] == '<') {
+                    state = 9;
+                } else if(input[pos] == '>') {
+                    state = 10;
+                } else if(input[pos] == '+') {
+                    state = 11;
+                } else if(input[pos] == '-') {
+                    state = 12;
+                } else if(input[pos] == '*') {
+                    state = 13;
+                } else if(input[pos] == '/') {
+                    state = 14;
+                } else if(input[pos] == '=') {
+                    state = 16;
+                } else if(input[pos] == '!') {
+                    state = 19;
+                } else if(input[pos] == '(') {
+                    state = 23;
+                } else if(input[pos] == ')') {
+                    state = 24;
+                } else if(input[pos] == '[') {
+                    state = 25;
+                } else if(input[pos] == ']') {
+                    state = 26;
+                } else if(input[pos] == '{') {
+                    state = 27;
+                } else if(input[pos] == '}') {
+                    state = 28;
+                } else if(input[pos] == ';') {
+                    state = 29;
+                } else if(input[pos] == ',') {
+                    state = 30;
+                } else if(input[pos] == '.') {
+                    state = 42;
+                } else if(input[pos] == '\n') {
+                    state = 32;
+                } else if(isspace(input[pos])) {
+                    state = 37;
+                } else {
+                    lexicalError("token inválido! :(");
+                }
+
+                pos++;
+                break;
+            case 1:
+                if(isalpha(input[pos]) || isdigit(input[pos]) || input[pos] == '_') {
+                    lexeme += input[pos];
+                } else if(input[pos] == '.' && lexeme == "System" && reservedPriority) {
+                    lexeme += input[pos];
+                    state = 39;
+                } else {
+                    state = 2;
+                }
+
+                pos++;
+                break;
+            case 2:
+                pos--;
+                return new Token(ID, lexeme);
+            // case 3:
+            case 4:
+                if(isdigit(input[pos])) {
+                    lexeme += input[pos];
+                } else {
+                    state = 5;
+                }
+                
+                pos++;
+                break;
+            case 5:
+                pos--;
+                return new Token(INTEGER_LITERAL, lexeme);
+            // case 6:
+            case 7:
+                if(input[pos] == '&') {
+                    state = 8;
+                    pos++;
+                } else {
+                    lexicalError("má formação do operador &&");
+                }
+
+                break;
+            case 8:
+                return new Token(OP, AND);
+            case 9:
+                return new Token(OP, LT);
+            case 10:
+                return new Token(OP, GT);
+            case 11:
+                return new Token(OP, PLUS);
+            case 12:
+                return new Token(OP, MINUS);
+            case 13:
+                return new Token(OP, MULT);
+            case 14:
+                if(input[pos] == '/') {
+                    state = 31;
+                } else if(input[pos] == '*') {
+                    state = 33;
+                } else {
+                    state = 15;
+                }
+
+                pos++;
+                break;
+            case 15:
+                pos--;
+                return new Token(OP, DIV);
+            case 16:
+                if(input[pos] == '=') {
+                    state = 18;
+                } else {
+                    state = 17;
+                }
+
+                pos++;
+                break;
+            case 17:
+                pos--;
+                return new Token(OP, ATTR);
+            case 18:
+                return new Token(OP, EQUALS);
+            case 19:
+                if(input[pos] == '=') {
+                    state = 21;
+                } else {
+                    state = 20;
+                }
+
+                pos++;
+                break;
+            case 20:
+                pos--;
+                return new Token(OP, NOT);
+            case 21:
+                return new Token(OP, NEQUALS);
+            // case 22:
+            case 23:
+                return new Token(SEP, LPAREN);
+            case 24:   
+                return new Token(SEP, RPAREN);
+            case 25:
+                return new Token(SEP, LBRACK);
+            case 26:
+                return new Token(SEP, RBRACK);
+            case 27:
+                return new Token(SEP, LBRACE);
+            case 28:
+                return new Token(SEP, RBRACE);
+            case 29:
+                return new Token(SEP, SCOLON);
+            case 30:
+                return new Token(SEP, COMMA);
+            case 31:
+                if(input[pos] == '\n') {
+                    state = 32;
+                } else {
+                    pos++;
+                }
+                
+                break;
+            case 32:
+                if(input[pos] == '\0') {
+                    return new Token(END_OF_FILE);
+                }
+
+                state = 0;
+                break;
+            case 33:
+                if(input[pos] == '*') {
+                    state = 34;
+                }
+
+                pos++;
+                break;
+            case 34:
+                if(input[pos] == '/') {
+                    state = 35;
+                } else {
+                    state = 33;
+                }
+
+                pos++;
+                break;
+            case 35:
+                state = 0;
+                break;
+            // case 36:
+            case 37:
+                if(!isspace(input[pos])) {
+                    state = 38;
+                }
+
+                pos++;
+                break;
+            case 38:
+                pos--;
+                state = 0;
+                break;
+            case 39:
+                if(isalpha(input[pos]) || input[pos] == '.') {
+                    lexeme += input[pos];
+                } else {
+                    state = 40;
+                }
+
+                pos++;
+                break;
+            case 40:
+                if(lexeme == "System.out.println") {
+                    pos--;
+                    return new Token(UNDEF, lexeme);
+                } else {
+                    pos -= (lexeme.length() + 1);
+                    return nextToken(false);
+                }
+            // case 41:
+            case 42:
+                return new Token(SEP, DOT);
+            case 43: 
+                return new Token(END_OF_FILE);
+            case 44: 
+                pos--;
+                state = 0;
+                break;       
+        }
+    }
 }
 
-void 
-Scanner::lexicalError(string msg)
-{
-    cout << "Linha "<< line << ": " << msg << endl;
-    
+// 39 e 40 são problemáticos........
+
+void  Scanner::lexicalError(string msg) {
+    cout << "Linha "<< line << ": " << msg << endl;    
     exit(EXIT_FAILURE);
 }
