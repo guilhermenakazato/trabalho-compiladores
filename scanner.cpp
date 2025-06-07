@@ -213,14 +213,19 @@ Token* Scanner::nextToken(bool reservedPriority) {
                 break;
             case 32:
                 if(input[pos] == '\0') {
-                    return new Token(END_OF_FILE);
+                    state = 43;
                 }
 
-                state = 0;
+                pos++;
+                state = 44;
                 break;
             case 33:
                 if(input[pos] == '*') {
                     state = 34;
+                } else if(input[pos] == '\n') {
+                    line++;
+                } else if(input[pos] == '\0') {
+                    lexicalError("comentário não finalizado.");
                 }
 
                 pos++;
@@ -272,6 +277,7 @@ Token* Scanner::nextToken(bool reservedPriority) {
             case 43: 
                 return new Token(END_OF_FILE);
             case 44: 
+                line++;
                 pos--;
                 state = 0;
                 break;       
