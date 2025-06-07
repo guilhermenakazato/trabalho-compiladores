@@ -1,6 +1,5 @@
 # Analisadores
-Primeira versão do analisador léxico implementada. Ainda falta arrumar o problema do comentário de bloco.
-
+Analisador léxico implementado.
 Para rodar, execute o seguinte comando no terminal:
 ```
 g++ *.h *.cpp -o scanner
