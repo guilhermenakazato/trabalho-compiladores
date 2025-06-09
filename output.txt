@@ -1,0 +1,78 @@
+Caractere: /
+Linha: 1
+Estado: 0
+
+Caractere: /
+Linha: 1
+Estado: 14
+
+Caractere:  
+Linha: 1
+Estado: 31
+
+Caractere: t
+Linha: 1
+Estado: 31
+
+Caractere: e
+Linha: 1
+Estado: 31
+
+Caractere: s
+Linha: 1
+Estado: 31
+
+Caractere: t
+Linha: 1
+Estado: 31
+
+Caractere: e
+Linha: 1
+Estado: 31
+
+Caractere: 
+
+Linha: 1
+Estado: 31
+
+Caractere: a
+Linha: 1
+Estado: 32
+
+Caractere:  
+Linha: 1
+Estado: 44
+
+Caractere: a
+Linha: 2
+Estado: 0
+
+Caractere:  
+Linha: 2
+Estado: 1
+
+Caractere: &
+Linha: 2
+Estado: 2
+
+ID(a) Caractere:  
+Linha: 2
+Estado: 0
+
+Caractere: &
+Linha: 2
+Estado: 37
+
+Caractere:  
+Linha: 2
+Estado: 38
+
+Caractere: &
+Linha: 2
+Estado: 0
+
+Caractere:  
+Linha: 2
+Estado: 7
+
+Linha 2: má formação do operador &&
