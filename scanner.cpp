@@ -34,6 +34,7 @@ int Scanner::getLine() {
 //Método que retorna o próximo token da entrada
 Token* Scanner::nextToken(bool reservedPriority) {
     int state = 0;
+    int blockCommentLineCount = 0;
     string lexeme;
 
     while(true) {
@@ -206,24 +207,24 @@ Token* Scanner::nextToken(bool reservedPriority) {
             case 31:
                 if(input[pos] == '\n') {
                     state = 32;
-                } else {
-                    pos++;
-                }
-                
+                } 
+
+                pos++;
                 break;
             case 32:
                 if(input[pos] == '\0') {
                     state = 43;
+                } else {
+                    pos++;
+                    state = 44;
                 }
 
-                pos++;
-                state = 44;
                 break;
             case 33:
                 if(input[pos] == '*') {
                     state = 34;
                 } else if(input[pos] == '\n') {
-                    line++;
+                    blockCommentLineCount++;
                 } else if(input[pos] == '\0') {
                     lexicalError("comentário não finalizado.");
                 }
@@ -240,6 +241,8 @@ Token* Scanner::nextToken(bool reservedPriority) {
                 pos++;
                 break;
             case 35:
+                line += blockCommentLineCount;
+                blockCommentLineCount = 0;
                 state = 0;
                 break;
             // case 36:
@@ -285,9 +288,7 @@ Token* Scanner::nextToken(bool reservedPriority) {
     }
 }
 
-// 39 e 40 são problemáticos........
-
 void  Scanner::lexicalError(string msg) {
-    cout << "Linha "<< line << ": " << msg << endl;    
+    cout << "\nLinha "<< line << ": " << msg << endl;    
     exit(EXIT_FAILURE);
 }
