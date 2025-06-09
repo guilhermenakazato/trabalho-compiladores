@@ -1,0 +1,5 @@
+// comentário de linha até o fim
+int x; // comentário aqui
+/* comentário de bloco simples */
+x = 1; /* não aninhar /* dentro */ y = 2; */
+/* comentário nunca fechado
