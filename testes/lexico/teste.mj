@@ -7,7 +7,7 @@
     *
 */
 
-public class Teste {
+class Teste {
     public static void main(String[] args) {
         int a = 239;
         int b = (a + 20) / (30 - 5) * 15 / 9;

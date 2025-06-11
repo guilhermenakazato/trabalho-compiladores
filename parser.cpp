@@ -17,6 +17,9 @@ void Parser::match(int t) {
 	if(t == ID && lToken->isReserved) {
 		error("Uso de palavra reservada como variável");
 	}
+	
+	cout << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
+	cout << t << endl;
 
 	if (lToken->name == t || lToken->attribute == t)
 		advance();
@@ -158,6 +161,8 @@ void Parser::statement() {
 		 	lToken->lexeme == "System.out.println" || lToken->name == ID) {
 			statement();
 		}
+
+		match(RBRACE);
 	} else if(lToken->lexeme == "if") {
 		advance();
 		match(LPAREN);

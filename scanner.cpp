@@ -299,7 +299,7 @@ Token* Scanner::nextToken(bool reservedPriority) {
     }
 }
 
-void  Scanner::lexicalError(string msg) {
+void Scanner::lexicalError(string msg) {
     cout << "\nLinha "<< line << ": " << msg << endl;    
     exit(EXIT_FAILURE);
 }
