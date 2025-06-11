@@ -40,6 +40,7 @@ class Token
         int name;
         int attribute;
         string lexeme;
+        bool isReserved = false;
     
         Token(int name)
         {
@@ -52,6 +53,14 @@ class Token
             this->name = name;
             attribute = UNDEF;
             lexeme = l;
+        }
+
+        Token(int name, string l, bool isReserved)
+        {
+            this->name = name;
+            attribute = UNDEF;
+            lexeme = l;
+            this->isReserved = isReserved;
         }
         
         Token(int name, int attr)
