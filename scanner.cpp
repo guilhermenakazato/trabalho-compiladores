@@ -108,16 +108,19 @@ Token* Scanner::nextToken(bool reservedPriority) {
                 pos++;
                 break;
             case 2:
-                pos--;
-                bool isReserved = false;
+                {
+                    pos--;
+                    bool isReserved = false;
 
-                if(lexeme == "boolean" || lexeme == "class" || lexeme == "else" || lexeme == "extends" ||
-                   lexeme == "false" || lexeme == "if" || lexeme == "int" || lexeme == "length" || lexeme == "main" ||
-                   lexeme == "new" || lexeme == "public" || lexeme == "return" || lexeme == "static" || lexeme == "String" ||
-                   lexeme == "true" || lexeme == "void" || lexeme == "while")
-                    isReserved = true;
+                    if(lexeme == "boolean" || lexeme == "class" || lexeme == "else" || lexeme == "extends" ||
+                    lexeme == "false" || lexeme == "if" || lexeme == "int" || lexeme == "length" || lexeme == "main" ||
+                    lexeme == "new" || lexeme == "public" || lexeme == "return" || lexeme == "static" || lexeme == "String" ||
+                    lexeme == "true" || lexeme == "void" || lexeme == "while")
+                        isReserved = true;
 
-                return new Token(ID, lexeme, isReserved);
+                    return new Token(ID, lexeme, isReserved); 
+                }
+                
             // case 3:
             case 4:
                 if(isdigit(input[pos])) {

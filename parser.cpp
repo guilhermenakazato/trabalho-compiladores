@@ -1,5 +1,10 @@
 #include "parser.h"
 
+/**
+ * name = ID, INTEGER_LITERAL, OP, SEP
+ * attribute = resto
+ */
+
 Parser::Parser(string input) {
 	scanner = new Scanner(input);
 }
@@ -89,6 +94,9 @@ void Parser::varDeclaration() {
 	match(SCOLON);
 }
 
+/**
+ * TODO: remove ambiguity!!
+ */
 void Parser::methodDeclaration() {
 	match("public");
 	type();
@@ -106,7 +114,7 @@ void Parser::methodDeclaration() {
 		varDeclaration();
 	}
 
-	while(lToken->name == RBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
+	while(lToken->attribute == RBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
 			lToken->lexeme == "System.out.println" || lToken->name == ID) {
 		statement();
 	}
@@ -121,7 +129,7 @@ void Parser::params() {
 	type();
 	match(ID);
 
-	while(lToken->name == COMMA) {
+	while(lToken->attribute == COMMA) {
 		advance();
 		type();
 		match(ID);
@@ -132,7 +140,7 @@ void Parser::type() {
 	if(lToken->lexeme == "int") {
 		advance();
 
-		if(lToken->name == LBRACK) {
+		if(lToken->attribute == LBRACK) {
 			match(RBRACK);
 		}
 	} else if(lToken->lexeme == "boolean" || (lToken->name == ID && !lToken->isReserved)) {
@@ -143,10 +151,10 @@ void Parser::type() {
 }
 
 void Parser::statement() {
-	if(lToken->name == LBRACE) {
+	if(lToken->attribute == LBRACE) {
 		advance();
 
-		while(lToken->name == LBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
+		while(lToken->attribute == LBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
 		 	lToken->lexeme == "System.out.println" || lToken->name == ID) {
 			statement();
 		}
@@ -173,7 +181,7 @@ void Parser::statement() {
 	} else if(lToken->name == ID) {
 		match(ID);
 
-		if(lToken->name == LPAREN) {
+		if(lToken->attribute == LPAREN) {
 			advance();
 			expression();
 			match(RPAREN);
@@ -203,7 +211,7 @@ void Parser::expression() {
 	} else if(lToken->lexeme == "new") {
 		advance();
 		expressionFactor();
-	} else if(lToken->name == NOT) {
+	} else if(lToken->attribute == NOT) {
 		advance();
 		expression();
 		expressionLine();
@@ -222,7 +230,7 @@ void Parser::expressionLine() {
 		op();
 		expression();
 		expressionLine();
-	} else if(lToken->name == LBRACK) {
+	} else if(lToken->attribute == LBRACK) {
 		advance();
 		expression();
 		match(RBRACK);
@@ -230,8 +238,58 @@ void Parser::expressionLine() {
 	} else if(lToken->attribute == DOT) {
 		advance();
 		expressionLineFactor();
+	} 
+}
+
+void Parser::expressionFactor() {
+	if(lToken->lexeme == "int") {
+		advance();
+		match(LBRACK);
+		expression();
+		match(RBRACK);
+		expressionLine();
+	} else if(lToken->name == ID) {
+		match(ID);
+		match(LPAREN);
+		match(RPAREN);
+		expressionLine();
 	} else {
-		// ?
+		error("Má formação de expressão");
+	}
+}
+
+void Parser::expressionLineFactor() {
+	if(lToken->lexeme == "length") {
+		advance();
+		expressionLine();
+	} else if(lToken->name == ID) {
+		match(ID);
+		match(LPAREN);
+
+		if(lToken->name == INTEGER_LITERAL || lToken->lexeme == "true" || lToken->lexeme == "false" ||
+			lToken->lexeme == "this" || lToken->lexeme == "new" || lToken->name == ID || lToken->attribute == NOT) {
+			expressionsList();
+		}
+ 
+		match(RPAREN);
+		expressionLine();
+	}
+}
+
+void Parser::op() {
+	if(lToken->attribute == AND || lToken->attribute == LT || lToken->attribute == GT || lToken->attribute == EQUALS ||
+		lToken->attribute == NEQUALS || lToken->attribute == PLUS || lToken->attribute == MINUS || lToken->attribute == MULT || lToken->attribute == DIV) {
+		advance();
+	} else {
+		error("Erro no operador");
+	}
+}
+
+void Parser::expressionsList() {
+	expression();
+
+	while(lToken->attribute == COMMA) {
+		expression();
 	}
 }
 
