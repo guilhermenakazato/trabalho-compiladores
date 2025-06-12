@@ -1,9 +1,57 @@
-class Banana {
+class Fruta {
     public static void main(String[] args) {
-        if(a > b) {
-
-        } else {
-
+        while(1 + 2) {
+            if(false) {
+                banana = 1;
+                banana[0] = 23;
+                System.out.println(false);
+            } else {
+                System.out.println(true);
+            }
         }
     }
+}   
+
+class Banana extends Fruta {
+    int[] seila;
+    int a;
+    boolean ehVerdadeIsso;
+    Fruta fruta;
+
+    public int[] particles(int cor, int qtde, bool temCor) {
+        int variavelLocal; 
+        int soma;
+
+        variavelLocal = 20;
+        while(1) {
+            soma = soma + 1;
+
+            if(soma == 30) {
+                return soma + variavelLocal;
+            }
+        }
+
+        rerturn variavelLocal[40];
+    }
+}
+
+class Manzana extends Fruta {
+    int[] seila;
+    int a;
+    boolean ehVerdadeIsso;
+    Fruta fruta;
+}
+
+class Orange extends Fruta {
+    int[] seila;
+    int a;
+    boolean ehVerdadeIsso;
+    Fruta fruta;
+}
+
+class Toranja extends Fruta {
+    int[] seila;
+    int a;
+    boolean ehVerdadeIsso;
+    Fruta fruta;
 }

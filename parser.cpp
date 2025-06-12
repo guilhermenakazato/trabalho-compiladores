@@ -11,15 +11,15 @@ Parser::Parser(string input) {
 
 void Parser::advance() {
 	lToken = scanner->nextToken();
+	cout << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
 }
 
 void Parser::match(int t) {
+	cout << "Esperado: " << t << endl;
+	
 	if(t == ID && lToken->isReserved) {
 		error("Uso de palavra reservada como variável");
 	}
-	
-	cout << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
-	cout << t << endl;
 
 	if (lToken->name == t || lToken->attribute == t)
 		advance();
@@ -28,6 +28,8 @@ void Parser::match(int t) {
 }
 
 void Parser::match(string lexeme) {
+	cout << "Esperado: " << lexeme << endl;
+
 	if(lToken->lexeme == lexeme) 	
 		advance();
 	else 
@@ -79,9 +81,9 @@ void Parser::classDeclaration() {
 		advance();
 		match(ID);
 	}
-
-	match(RBRACE);
-
+	
+	match(LBRACE);
+	
 	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || lToken->name == ID) {
 		varDeclaration();
 	}
@@ -89,6 +91,8 @@ void Parser::classDeclaration() {
 	while(lToken->lexeme == "public") {
 		methodDeclaration();
 	}
+
+	match(RBRACE);
 }
 
 void Parser::varDeclaration() {
@@ -97,9 +101,6 @@ void Parser::varDeclaration() {
 	match(SCOLON);
 }
 
-/**
- * TODO: remove ambiguity!!
- */
 void Parser::methodDeclaration() {
 	match("public");
 	type();
@@ -113,7 +114,7 @@ void Parser::methodDeclaration() {
 	match(RPAREN);
 	match(LBRACE);
 
-	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || lToken->name == ID) {
+	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || (lToken->name == ID && scanner->nextToken()->name == ID)) {
 		varDeclaration();
 	}
 
@@ -140,10 +141,13 @@ void Parser::params() {
 }
 
 void Parser::type() {
+	cout << "Hii????" << endl;
+
 	if(lToken->lexeme == "int") {
 		advance();
 
 		if(lToken->attribute == LBRACK) {
+			advance();
 			match(RBRACK);
 		}
 	} else if(lToken->lexeme == "boolean" || (lToken->name == ID && !lToken->isReserved)) {
@@ -186,10 +190,10 @@ void Parser::statement() {
 	} else if(lToken->name == ID) {
 		match(ID);
 
-		if(lToken->attribute == LPAREN) {
+		if(lToken->attribute == LBRACK) {
 			advance();
 			expression();
-			match(RPAREN);
+			match(RBRACK);
 		}
 
 		match(ATTR);
