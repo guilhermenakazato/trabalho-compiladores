@@ -31,7 +31,7 @@ class Banana extends Fruta {
             }
         }
 
-        rerturn variavelLocal[40];
+        return variavelLocal[40];
     }
 }
 

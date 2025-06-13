@@ -10,12 +10,49 @@ Parser::Parser(string input) {
 }
 
 void Parser::advance() {
+	string vet[26];
+    vet[0] = "UNDEF",
+    vet[1] = "ID",
+    vet[2] = "INTEGER_LITERAL",
+    vet[3] = "OP",
+    vet[4] = "AND",
+    vet[5] = "LT",
+    vet[6] = "GT",
+    vet[7] = "PLUS",
+    vet[8] = "MINUS",
+    vet[9] = "MULT",
+    vet[10] = "DIV",
+    vet[11] = "ATTR",
+    vet[12] = "EQUALS",
+    vet[13] = "NOT",
+    vet[14] = "NEQUALS",
+    vet[15] = "SEP",
+    vet[16] = "LPAREN",
+    vet[17] = "RPAREN",
+    vet[18] = "LBRACK",
+    vet[19] = "RBRACK",
+    vet[20] = "LBRACE",
+    vet[21] = "RBRACE",
+    vet[22] = "SCOLON",
+    vet[23] = "COMMA",
+    vet[24] = "DOT",
+    vet[25] = "END_OF_FILE";
+
 	lToken = scanner->nextToken();
-	cout << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
+	if(lToken->name == ID || lToken->name == INTEGER_LITERAL) {
+        cout << vet[lToken->name] + "(" + lToken->lexeme + ")" + " ";
+    } else if(lToken->name == END_OF_FILE || lToken->name == ATTR) {
+        cout << vet[lToken->name] + " ";
+    } else if(lToken->name == UNDEF) {
+        cout << lToken->lexeme << " ";
+    } else {
+        cout << vet[lToken->attribute] + " ";
+    }
+	// cout << "Próximo token: " << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
 }
 
 void Parser::match(int t) {
-	cout << "Esperado: " << t << endl;
+	// cout << "Esperado: " << t << endl;
 	
 	if(t == ID && lToken->isReserved) {
 		error("Uso de palavra reservada como variável");
@@ -28,7 +65,7 @@ void Parser::match(int t) {
 }
 
 void Parser::match(string lexeme) {
-	cout << "Esperado: " << lexeme << endl;
+	// cout << "Esperado: " << lexeme << endl;
 
 	if(lToken->lexeme == lexeme) 	
 		advance();
@@ -84,7 +121,7 @@ void Parser::classDeclaration() {
 	
 	match(LBRACE);
 	
-	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || lToken->name == ID) {
+	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || (lToken->name == ID && !lToken->isReserved)) {
 		varDeclaration();
 	}
 
@@ -141,8 +178,6 @@ void Parser::params() {
 }
 
 void Parser::type() {
-	cout << "Hii????" << endl;
-
 	if(lToken->lexeme == "int") {
 		advance();
 
@@ -189,7 +224,7 @@ void Parser::statement() {
 		match(SCOLON);
 	} else if(lToken->name == ID) {
 		match(ID);
-
+		
 		if(lToken->attribute == LBRACK) {
 			advance();
 			expression();
