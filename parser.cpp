@@ -4,55 +4,56 @@
  * name = ID, INTEGER_LITERAL, OP, SEP
  * attribute = resto
  */
+Token* l2Token;
 
 Parser::Parser(string input) {
 	scanner = new Scanner(input);
 }
 
 void Parser::advance() {
-	string vet[26];
-    vet[0] = "UNDEF",
-    vet[1] = "ID",
-    vet[2] = "INTEGER_LITERAL",
-    vet[3] = "OP",
-    vet[4] = "AND",
-    vet[5] = "LT",
-    vet[6] = "GT",
-    vet[7] = "PLUS",
-    vet[8] = "MINUS",
-    vet[9] = "MULT",
-    vet[10] = "DIV",
-    vet[11] = "ATTR",
-    vet[12] = "EQUALS",
-    vet[13] = "NOT",
-    vet[14] = "NEQUALS",
-    vet[15] = "SEP",
-    vet[16] = "LPAREN",
-    vet[17] = "RPAREN",
-    vet[18] = "LBRACK",
-    vet[19] = "RBRACK",
-    vet[20] = "LBRACE",
-    vet[21] = "RBRACE",
-    vet[22] = "SCOLON",
-    vet[23] = "COMMA",
-    vet[24] = "DOT",
-    vet[25] = "END_OF_FILE";
+	// string vet[26];
+    // vet[0] = "UNDEF",
+    // vet[1] = "ID",
+    // vet[2] = "INTEGER_LITERAL",
+    // vet[3] = "OP",
+    // vet[4] = "AND",
+    // vet[5] = "LT",
+    // vet[6] = "GT",
+    // vet[7] = "PLUS",
+    // vet[8] = "MINUS",
+    // vet[9] = "MULT",
+    // vet[10] = "DIV",
+    // vet[11] = "ATTR",
+    // vet[12] = "EQUALS",
+    // vet[13] = "NOT",
+    // vet[14] = "NEQUALS",
+    // vet[15] = "SEP",
+    // vet[16] = "LPAREN",
+    // vet[17] = "RPAREN",
+    // vet[18] = "LBRACK",
+    // vet[19] = "RBRACK",
+    // vet[20] = "LBRACE",
+    // vet[21] = "RBRACE",
+    // vet[22] = "SCOLON",
+    // vet[23] = "COMMA",
+    // vet[24] = "DOT",
+    // vet[25] = "END_OF_FILE";
 
 	lToken = scanner->nextToken();
-	if(lToken->name == ID || lToken->name == INTEGER_LITERAL) {
-        cout << vet[lToken->name] + "(" + lToken->lexeme + ")" + " ";
-    } else if(lToken->name == END_OF_FILE || lToken->name == ATTR) {
-        cout << vet[lToken->name] + " ";
-    } else if(lToken->name == UNDEF) {
-        cout << lToken->lexeme << " ";
-    } else {
-        cout << vet[lToken->attribute] + " ";
-    }
-	// cout << "Próximo token: " << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
+	// if(lToken->name == ID || lToken->name == INTEGER_LITERAL) {
+    //     cout << vet[lToken->name] + "(" + lToken->lexeme + ")" + " ";
+    // } else if(lToken->name == END_OF_FILE || lToken->name == ATTR) {
+    //     cout << vet[lToken->name] + " ";
+    // } else if(lToken->name == UNDEF) {
+    //     cout << lToken->lexeme << " ";
+    // } else {
+    //     cout << vet[lToken->attribute] + " ";
+    // }
+	cout << "Próximo token: " << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
 }
 
 void Parser::match(int t) {
-	// cout << "Esperado: " << t << endl;
+	cout << "Esperado: " << t << endl;
 	
 	if(t == ID && lToken->isReserved) {
 		error("Uso de palavra reservada como variável");
@@ -65,12 +66,29 @@ void Parser::match(int t) {
 }
 
 void Parser::match(string lexeme) {
-	// cout << "Esperado: " << lexeme << endl;
+	cout << "Esperado: " << lexeme << endl;
 
 	if(lToken->lexeme == lexeme) 	
 		advance();
 	else 
 		error("palavra reservada não corresponde ao esperado (" + lexeme + ")");
+}
+
+void Parser::match(int t1, int t2) {
+	cout << "Esperado (1): " << t1 << endl;
+	cout << "Esperado (2): " << t2 << endl;
+
+	if(t1 == ID && lToken->isReserved || t2 == ID && lToken->isReserved) {
+		error("Uso de palavra reservada como variável");
+	}
+
+	if ((lToken->name == t1 || lToken->attribute == t1) && (l2Token->name == t2 || l2Token->attribute == t2)) {
+		delete l2Token;
+		l2Token = nullptr;
+		advance();
+	} else {
+		error("Erro inesperado");
+	}
 }
 
 void Parser::run() {
@@ -133,8 +151,13 @@ void Parser::classDeclaration() {
 }
 
 void Parser::varDeclaration() {
-	type();
-	match(ID);
+	if(l2Token) {
+		match(ID, ID);
+	} else {
+		type();
+		match(ID);
+	}
+	
 	match(SCOLON);
 }
 
@@ -151,12 +174,22 @@ void Parser::methodDeclaration() {
 	match(RPAREN);
 	match(LBRACE);
 
-	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || (lToken->name == ID && scanner->nextToken()->name == ID)) {
+	// problemático... statement() e varDeclaration() podem dar muito errado.....
+	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || lToken->name == ID) {
+		if(lToken->name == ID && !lToken->isReserved) {
+			l2Token = scanner->nextToken();
+
+			if(l2Token->name != ID)
+				break;
+		}
+
 		varDeclaration();
 	}
 
+	if(l2Token)
+		cout << "Lookahead 2: " << l2Token->name << "," << l2Token->attribute << endl; 
 	while(lToken->attribute == RBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
-			lToken->lexeme == "System.out.println" || lToken->name == ID) {
+			lToken->lexeme == "System.out.println" || (lToken->name == ID && !lToken->isReserved)) {
 		statement();
 	}
 
@@ -223,17 +256,32 @@ void Parser::statement() {
 		match(RPAREN);
 		match(SCOLON);
 	} else if(lToken->name == ID) {
-		match(ID);
+		if(l2Token) {
+			if(l2Token->attribute == LBRACK) {
+				match(ID, LBRACK);
+				expression();
+				match(RBRACK);
+			} else if(l2Token->attribute == ATTR) {
+				match(ID, ATTR);
+				expression();
+				match(SCOLON);
+			} else {
+				cout << "Oops!" << endl;
+ 				error("Má formação da declaração");
+			}
+		} else {
+			match(ID);
 		
-		if(lToken->attribute == LBRACK) {
-			advance();
-			expression();
-			match(RBRACK);
-		}
+			if(lToken->attribute == LBRACK) {
+				advance();
+				expression();
+				match(RBRACK);
+			}
 
-		match(ATTR);
-		expression();
-		match(SCOLON);
+			match(ATTR);
+			expression();
+			match(SCOLON);
+		}
 	} else {
 		error("Má formação da declaração");
 	}

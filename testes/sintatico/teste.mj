@@ -27,7 +27,9 @@ class Banana extends Fruta {
             soma = soma + 1;
 
             if(soma == 30) {
-                return soma + variavelLocal;
+                variavelLocal = soma + variavelLocal;
+            } else {
+                variavelLocal[20] = 10;
             }
         }
 

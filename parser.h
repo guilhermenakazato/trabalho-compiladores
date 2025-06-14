@@ -9,6 +9,7 @@ class Parser
 		void advance();
 		void match(int);
 		void match(string);
+		void match(int, int);
 		
 	public:
 		Parser(string);
