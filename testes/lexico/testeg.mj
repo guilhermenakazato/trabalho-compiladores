@@ -1,0 +1,6 @@
+class Main {
+    public static void main(String[] args) {
+        // ma formacao de expressao na linha do sout, certinho
+        System.out.println(+);
+    }
+}

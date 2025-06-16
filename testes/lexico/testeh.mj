@@ -1,0 +1,23 @@
+class Main {
+    public static void main(String[] args) {
+        System.out.println(1);
+    }
+}
+
+class Classe {
+    int[] vetor;
+    public int testewhile(int valor) {
+        int i;
+        i = 0;
+        while (i < valor) {
+            if (i == 2) {
+                System.out.println(i);
+            } else {
+                System.out.println(0);
+            }
+            i = i + 1;
+            // contador :D
+        }
+        return i;
+    }
+}

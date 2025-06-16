@@ -1,0 +1,9 @@
+//esses testes tem q dar errado
+
+class Main {
+    public static void main(String[] args) {
+        //errim sem ; (acusou linha 6 ta ok)
+        int x
+        System.out.println(x);
+    }
+}

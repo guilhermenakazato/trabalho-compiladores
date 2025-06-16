@@ -1,0 +1,13 @@
+class Main {
+    public static void main(String[] args) {
+        System.out.println(1);
+    }
+}
+
+class metodochimpanze {
+    public int babuinoNoReturn() {
+        int x;
+        x = 5;
+    // acusou na linha aqui da chave que fecha o metodo
+    }
+}

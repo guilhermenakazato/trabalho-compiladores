@@ -267,7 +267,7 @@ void Parser::statement() {
 				match(SCOLON);
 			} else {
 				cout << "Oops!" << endl;
- 				error("Má formação da declaração");
+ 				error("Ma formacao da declaracao");
 			}
 		} else {
 			match(ID);
@@ -283,7 +283,7 @@ void Parser::statement() {
 			match(SCOLON);
 		}
 	} else {
-		error("Má formação da declaração");
+		error("Ma formacao da declaracao");
 	}
 }
 
@@ -311,7 +311,7 @@ void Parser::expression() {
 		match(ID);
 		expressionLine();
 	} else {
-		error("Má formação de expressão");
+		error("Ma formacao de expressao");
 	}
 }
 
@@ -346,7 +346,7 @@ void Parser::expressionFactor() {
 		match(RPAREN);
 		expressionLine();
 	} else {
-		error("Má formação de expressão");
+		error("Ma formacao de expressao");
 	}
 }
 
