@@ -49,14 +49,14 @@ void Parser::advance() {
     // } else {
     //     cout << vet[lToken->attribute] + " ";
     // }
-	cout << "Próximo token: " << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
+	cout << "Proximo token: " << lToken->name << "," << lToken->attribute << "," << lToken->lexeme << endl;
 }
 
 void Parser::match(int t) {
 	cout << "Esperado: " << t << endl;
 	
 	if(t == ID && lToken->isReserved) {
-		error("Uso de palavra reservada como variável");
+		error("Uso de palavra reservada como variavel");
 	}
 
 	if (lToken->name == t || lToken->attribute == t)
@@ -71,7 +71,7 @@ void Parser::match(string lexeme) {
 	if(lToken->lexeme == lexeme) 	
 		advance();
 	else 
-		error("palavra reservada não corresponde ao esperado (" + lexeme + ")");
+		error("palavra reservada nao corresponde ao esperado (" + lexeme + ")");
 }
 
 void Parser::match(int t1, int t2) {
@@ -79,7 +79,7 @@ void Parser::match(int t1, int t2) {
 	cout << "Esperado (2): " << t2 << endl;
 
 	if(t1 == ID && lToken->isReserved || t2 == ID && lToken->isReserved) {
-		error("Uso de palavra reservada como variável");
+		error("Uso de palavra reservada como variavel");
 	}
 
 	if ((lToken->name == t1 || lToken->attribute == t1) && (l2Token->name == t2 || l2Token->attribute == t2)) {
@@ -95,7 +95,7 @@ void Parser::run() {
 	advance();
 	program();
 
-	cout << "Compilação encerrada com sucesso!\n";
+	cout << "Compilacao encerrada com sucesso!\n";
 }
 
 void Parser::program() {
