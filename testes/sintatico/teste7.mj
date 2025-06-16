@@ -1,0 +1,11 @@
+class Main{
+    public static void main(String[] args) {
+        x 1; //faltou o =
+    }
+}
+
+class banana{
+    public void declarando() {
+        int x;
+    }
+}

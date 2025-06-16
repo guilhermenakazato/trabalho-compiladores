@@ -1,0 +1,5 @@
+class Main {
+    public static void main(String[] args) {
+        x = 10; // nao tem tipo nem foi declarado mas é pra passar
+    }
+}

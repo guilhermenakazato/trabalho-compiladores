@@ -1,3 +1,4 @@
+// *********** VOCE DISSE QUE NAO ERA PRA DAR ERRO NESSE ****************
 class Main {
     public static void main(String[] args) {
         System.out.println(1);

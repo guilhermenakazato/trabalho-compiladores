@@ -1,0 +1,12 @@
+class Main {
+    public static void main(String[] args) {
+        a[2 = 1; // expressao zoada no indice
+    }
+}
+
+class dec{
+    public void declaraydeclara() {
+        int[] a;
+        a = new int[5];
+    }
+}

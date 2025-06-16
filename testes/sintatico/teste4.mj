@@ -1,0 +1,11 @@
+class Main {
+    public static void main(String[] args) {
+        System.out.println(1);
+    }
+}
+
+class monkey {
+    public naka() { //falta o tipo de retorno
+        return 1;
+    }
+}
