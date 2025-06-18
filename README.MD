@@ -2,12 +2,12 @@
 Analisador léxico implementado.
 Para rodar, execute o seguinte comando no terminal:
 ```
-g++ *.h *.cpp -o scanner
+g++ -std=c++11 *.cpp -o scanner
 ```
 
 Para testar, execute
 ```
-./scanner testes/teste.mj
-./scanner testes/teste2.mj
-./scanner testes/teste3.mj
+./scanner testes/lexico/teste.mj
+./scanner testes/sintatico/teste2.mj
+./scanner testes/lexico/teste3.mj
 ```

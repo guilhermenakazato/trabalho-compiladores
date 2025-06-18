@@ -188,7 +188,8 @@ void Parser::methodDeclaration() {
 
 	if(l2Token)
 		cout << "Lookahead 2: " << l2Token->name << "," << l2Token->attribute << endl; 
-	while(lToken->attribute == RBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
+	
+	while(lToken->attribute == LBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
 			lToken->lexeme == "System.out.println" || (lToken->name == ID && !lToken->isReserved)) {
 		statement();
 	}
@@ -266,7 +267,6 @@ void Parser::statement() {
 				expression();
 				match(SCOLON);
 			} else {
-				cout << "Oops!" << endl;
  				error("Ma formacao da declaracao");
 			}
 		} else {
@@ -359,7 +359,7 @@ void Parser::expressionLineFactor() {
 		match(LPAREN);
 
 		if(lToken->name == INTEGER_LITERAL || lToken->lexeme == "true" || lToken->lexeme == "false" ||
-			lToken->lexeme == "this" || lToken->lexeme == "new" || lToken->name == ID || lToken->attribute == NOT) {
+			lToken->lexeme == "this" || lToken->lexeme == "new" || (lToken->name == ID && !lToken->isReserved) || lToken->attribute == NOT) {
 			expressionsList();
 		}
  

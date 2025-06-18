@@ -1,6 +1,6 @@
 class Main{
     public static void main(String[] args) {
-        int x;
-        x 1; //faltou o =
+        int x; // declaracao dentro da main
+        x 1;
     }
 }
