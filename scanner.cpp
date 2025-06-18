@@ -108,19 +108,45 @@ Token* Scanner::nextToken(bool reservedPriority) {
                 pos++;
                 break;
             case 2:
-                {
-                    pos--;
-                    bool isReserved = false;
+                pos--;
 
-                    if(lexeme == "boolean" || lexeme == "class" || lexeme == "else" || lexeme == "extends" ||
-                    lexeme == "false" || lexeme == "if" || lexeme == "int" || lexeme == "length" || lexeme == "main" ||
-                    lexeme == "new" || lexeme == "public" || lexeme == "return" || lexeme == "static" || lexeme == "String" ||
-                    lexeme == "true" || lexeme == "void" || lexeme == "while")
-                        isReserved = true;
-
-                    return new Token(ID, lexeme, isReserved); 
+                if(lexeme == "boolean") {
+                    return new Token(RESERVED, BOOLEAN);
+                } else if(lexeme == "class") {
+                    return new Token(RESERVED, CLASS);
+                } else if(lexeme == "else") {
+                    return new Token(RESERVED, ELSE);
+                } else if(lexeme == "extends") {    
+                    return new Token(RESERVED, EXTENDS);
+                } else if(lexeme == "false") {
+                    return new Token(RESERVED, FALSE);
+                } else if(lexeme == "if") {
+                    return new Token(RESERVED, IF);
+                } else if(lexeme == "int") {
+                    return new Token(RESERVED, INT);
+                } else if(lexeme == "length") {
+                    return new Token(RESERVED, LENGTH);
+                } else if(lexeme == "main") {
+                    return new Token(RESERVED, MAIN);
+                } else if(lexeme == "new") {
+                    return new Token(RESERVED, NEW);
+                } else if(lexeme == "public") {
+                    return new Token(RESERVED, PUBLIC);
+                } else if(lexeme == "return") {
+                    return new Token(RESERVED, RETURN);
+                } else if(lexeme == "static") {
+                    return new Token(RESERVED, STATIC);
+                } else if(lexeme == "String") {
+                    return new Token(RESERVED, STRING);
+                } else if(lexeme == "true") {
+                    return new Token(RESERVED, TRUE);
+                } else if(lexeme == "void") {
+                    return new Token(RESERVED, VOID);
+                } else if(lexeme == "while") {
+                    return new Token(RESERVED, WHILE);
                 }
-                
+
+                return new Token(ID, lexeme);                 
             // case 3:
             case 4:
                 if(isdigit(input[pos])) {
@@ -280,7 +306,7 @@ Token* Scanner::nextToken(bool reservedPriority) {
             case 40:
                 if(lexeme == "System.out.println") {
                     pos--;
-                    return new Token(UNDEF, lexeme, true);
+                    return new Token(RESERVED, SOUT);
                 } else {
                     pos -= (lexeme.length() + 1);
                     return nextToken(false);
