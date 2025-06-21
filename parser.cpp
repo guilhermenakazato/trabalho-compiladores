@@ -55,7 +55,7 @@ void Parser::run() {
 void Parser::program() {
 	mainClass();
 
-	while(lToken->lexeme == "class") {
+	while(lToken->attribute == CLASS) {
 		classDeclaration();
 	}
 
@@ -66,12 +66,12 @@ void Parser::mainClass() {
 	match(CLASS);
 	match(ID);
 	match(LBRACE);
-	match("public");
-	match("static");
-	match("void");
-	match("main");
+	match(PUBLIC);
+	match(STATIC);
+	match(VOID);
+	match(MAIN);
 	match(LPAREN);
-	match("String");
+	match(STRING);
 	match(LBRACK);
 	match(RBRACK);
 	match(ID);
@@ -83,21 +83,21 @@ void Parser::mainClass() {
 }
 
 void Parser::classDeclaration() {
-	match("class");
+	match(CLASS);
 	match(ID);
 	
-	if(lToken->lexeme == "extends") {
+	if(lToken->attribute == EXTENDS) {
 		advance();
 		match(ID);
 	}
 	
 	match(LBRACE);
 	
-	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || (lToken->name == ID && !lToken->isReserved)) {
+	while(lToken->attribute == INT || lToken->attribute == BOOLEAN || lToken->name == ID) {
 		varDeclaration();
 	}
 
-	while(lToken->lexeme == "public") {
+	while(lToken->attribute == PUBLIC) {
 		methodDeclaration();
 	}
 
@@ -116,12 +116,12 @@ void Parser::varDeclaration() {
 }
 
 void Parser::methodDeclaration() {
-	match("public");
+	match(PUBLIC);
 	type();
 	match(ID);
 	match(LPAREN);
 
-	if(lToken->lexeme == "int" || lToken->lexeme == "boolean" || lToken->name == ID) {
+	if(lToken->attribute == INT || lToken->attribute == BOOLEAN || lToken->name == ID) {
 		params();
 	}
 
@@ -129,8 +129,9 @@ void Parser::methodDeclaration() {
 	match(LBRACE);
 
 	// problemático... statement() e varDeclaration() podem dar muito errado.....
-	while(lToken->lexeme == "int" || lToken->lexeme == "boolean" || lToken->name == ID) {
-		if(lToken->name == ID && !lToken->isReserved) {
+	while(lToken->attribute == INT || lToken->attribute == BOOLEAN || lToken->name == ID) {
+		// para resolver a ambiguidade entre VarDeclaration e Statement
+		if(lToken->name == ID) {
 			l2Token = scanner->nextToken();
 
 			if(l2Token->name != ID)
@@ -143,12 +144,12 @@ void Parser::methodDeclaration() {
 	if(l2Token)
 		cout << "Lookahead 2: " << l2Token->name << "," << l2Token->attribute << endl; 
 	
-	while(lToken->attribute == LBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
-			lToken->lexeme == "System.out.println" || (lToken->name == ID && !lToken->isReserved)) {
+	while(lToken->attribute == LBRACE || lToken->attribute == IF || lToken->attribute == WHILE ||
+			lToken->attribute == SOUT || lToken->name == ID) {
 		statement();
 	}
 
-	match("return");
+	match(RETURN);
 	expression();
 	match(SCOLON);
 	match(RBRACE);
@@ -166,14 +167,14 @@ void Parser::params() {
 }
 
 void Parser::type() {
-	if(lToken->lexeme == "int") {
+	if(lToken->attribute == INT) {
 		advance();
 
 		if(lToken->attribute == LBRACK) {
 			advance();
 			match(RBRACK);
 		}
-	} else if(lToken->lexeme == "boolean" || (lToken->name == ID && !lToken->isReserved)) {
+	} else if(lToken->attribute == BOOLEAN || lToken->name == ID) {
 		advance();
 	} else {
 		error("Erro ao especificar o tipo");
@@ -184,27 +185,27 @@ void Parser::statement() {
 	if(lToken->attribute == LBRACE) {
 		advance();
 
-		while(lToken->attribute == LBRACE || lToken->lexeme == "if" || lToken->lexeme == "while" ||
-		 	lToken->lexeme == "System.out.println" || lToken->name == ID) {
+		while(lToken->attribute == LBRACE || lToken->attribute == IF || lToken->attribute == WHILE ||
+		 	lToken->attribute == SOUT || lToken->name == ID) {
 			statement();
 		}
 
 		match(RBRACE);
-	} else if(lToken->lexeme == "if") {
+	} else if(lToken->attribute == IF) {
 		advance();
 		match(LPAREN);
 		expression();
 		match(RPAREN);
 		statement();
-		match("else");
+		match(ELSE);
 		statement();
-	} else if(lToken->lexeme == "while") {
+	} else if(lToken->attribute == WHILE) {
 		advance();
 		match(LPAREN);
 		expression();
 		match(RPAREN);
 		statement();
-	} else if(lToken->lexeme == "System.out.println") {
+	} else if(lToken->attribute == SOUT) {
 		advance();
 		match(LPAREN);
 		expression();
@@ -245,16 +246,16 @@ void Parser::expression() {
 	if(lToken->name == INTEGER_LITERAL) {
 		advance();
 		expressionLine();
-	} else if(lToken->lexeme == "true") {
+	} else if(lToken->attribute == TRUE) {
 		advance();
 		expressionLine();
-	} else if(lToken->lexeme == "false") {
+	} else if(lToken->attribute == FALSE) {
 		advance();
 		expressionLine();
-	} else if(lToken->lexeme == "this") {
+	} else if(lToken->attribute == THIS) {
 		advance();
 		expressionLine();
-	} else if(lToken->lexeme == "new") {
+	} else if(lToken->attribute == NEW) {
 		advance();
 		expressionFactor();
 	} else if(lToken->attribute == NOT) {
@@ -288,7 +289,7 @@ void Parser::expressionLine() {
 }
 
 void Parser::expressionFactor() {
-	if(lToken->lexeme == "int") {
+	if(lToken->attribute == INT) {
 		advance();
 		match(LBRACK);
 		expression();
@@ -305,15 +306,15 @@ void Parser::expressionFactor() {
 }
 
 void Parser::expressionLineFactor() {
-	if(lToken->lexeme == "length") {
+	if(lToken->attribute == LENGTH) {
 		advance();
 		expressionLine();
 	} else if(lToken->name == ID) {
 		match(ID);
 		match(LPAREN);
 
-		if(lToken->name == INTEGER_LITERAL || lToken->lexeme == "true" || lToken->lexeme == "false" ||
-			lToken->lexeme == "this" || lToken->lexeme == "new" || (lToken->name == ID && !lToken->isReserved) || lToken->attribute == NOT) {
+		if(lToken->name == INTEGER_LITERAL || lToken->attribute == TRUE || lToken->attribute == FALSE ||
+			lToken->attribute == THIS || lToken->attribute == NEW || lToken->name == ID || lToken->attribute == NOT) {
 			expressionsList();
 		}
  

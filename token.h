@@ -50,6 +50,7 @@ enum Names
     VOID, //41
     WHILE, //42
     SOUT,
+    THIS,
     END_OF_FILE //43
 };
 
